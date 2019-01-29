@@ -85,7 +85,9 @@ public final class SimpleHttpClient {
         HttpURLConnection connection = null;
         DataOutputStream outputStream = null;
         try {
-            URL urlToConnect = "POST".equals(method) || body == null || body.isEmpty() ? new URL(url) : new URL(String.format("%s?%s", url, body));
+            URL urlToConnect = body == null || body.isEmpty()
+                    ? new URL(url)
+                    : new URL(String.format("%s?%s", url, body));
             connection = (HttpURLConnection) urlToConnect.openConnection();
             connection.setRequestMethod(method);
             for (Map.Entry<String, String> header : headers.entrySet()) {

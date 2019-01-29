@@ -13,6 +13,9 @@ import java.util.Properties;
 
 public final class GitterSources {
 
+    private GitterSources() {
+    }
+
     public static StreamSource<Tuple2<JsonObject, String>> room(Properties prop) {
         return SourceBuilder.stream("gitter", context -> new GitterRestHelper(prop))
                 .fillBufferFn(GitterRestHelper::fillBuffer)

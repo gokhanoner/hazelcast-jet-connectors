@@ -12,6 +12,8 @@
         <module>common</module>
         <module>hazelcast-jet-slack</module>
         <module>hazelcast-jet-gitter</module>
+        <module>hazelcast-jet-influxdb</module>
+        <module>hazelcast-jet-imap</module>
     </modules>
 
     <properties>

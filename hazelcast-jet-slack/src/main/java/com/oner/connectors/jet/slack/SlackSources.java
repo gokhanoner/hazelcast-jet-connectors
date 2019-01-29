@@ -12,7 +12,10 @@ import com.oner.connectors.util.SimpleHttpClient;
 import java.util.ListIterator;
 import java.util.Properties;
 
-public class SlackSources {
+public final class SlackSources {
+
+    private SlackSources() {
+    }
 
     public static StreamSource<Tuple2<JsonObject, String>> channel(Properties properties) {
         return SourceBuilder.stream("slack", context -> new SlackRestHelper(properties))

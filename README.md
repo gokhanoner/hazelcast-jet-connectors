@@ -1,1 +1,1 @@
-# hazelcast-jet-connectors
+# Hazelcast Jet Connectors
