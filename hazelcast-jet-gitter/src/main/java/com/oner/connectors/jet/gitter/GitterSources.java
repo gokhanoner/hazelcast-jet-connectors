@@ -2,9 +2,7 @@ package com.oner.connectors.jet.gitter;
 
 import com.hazelcast.com.eclipsesource.json.Json;
 import com.hazelcast.com.eclipsesource.json.JsonArray;
-import com.hazelcast.com.eclipsesource.json.JsonObject;
 import com.hazelcast.com.eclipsesource.json.JsonValue;
-import com.hazelcast.jet.datamodel.Tuple2;
 import com.hazelcast.jet.pipeline.SourceBuilder;
 import com.hazelcast.jet.pipeline.StreamSource;
 import com.oner.connectors.util.SimpleHttpClient;
@@ -16,7 +14,7 @@ public final class GitterSources {
     private GitterSources() {
     }
 
-    public static StreamSource<Tuple2<JsonObject, String>> room(Properties prop) {
+    public static StreamSource<String> room(Properties prop) {
         return SourceBuilder.stream("gitter", context -> new GitterRestHelper(prop))
                 .fillBufferFn(GitterRestHelper::fillBuffer)
                 .build();
@@ -52,7 +50,7 @@ public final class GitterSources {
             return test.isEmpty() || "REPLACE_THIS".equals(test);
         }
 
-        void fillBuffer(SourceBuilder.SourceBuffer<Tuple2<JsonObject, String>> buf) {
+        void fillBuffer(SourceBuilder.SourceBuffer<String> buf) {
             if (!readyToPoll()) {
                 return;
             }
@@ -65,7 +63,7 @@ public final class GitterSources {
 
             for (JsonValue message : messages.values()) {
                 afterId = message.asObject().getString("id", "");
-                buf.add(Tuple2.tuple2(message.asObject(), afterId));
+                buf.add(message.toString());
             }
         }
 

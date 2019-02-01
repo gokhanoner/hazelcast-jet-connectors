@@ -4,7 +4,6 @@ import com.hazelcast.com.eclipsesource.json.Json;
 import com.hazelcast.com.eclipsesource.json.JsonArray;
 import com.hazelcast.com.eclipsesource.json.JsonObject;
 import com.hazelcast.com.eclipsesource.json.JsonValue;
-import com.hazelcast.jet.datamodel.Tuple2;
 import com.hazelcast.jet.pipeline.SourceBuilder;
 import com.hazelcast.jet.pipeline.StreamSource;
 import com.oner.connectors.util.SimpleHttpClient;
@@ -17,7 +16,7 @@ public final class SlackSources {
     private SlackSources() {
     }
 
-    public static StreamSource<Tuple2<JsonObject, String>> channel(Properties properties) {
+    public static StreamSource<String> channel(Properties properties) {
         return SourceBuilder.stream("slack", context -> new SlackRestHelper(properties))
                 .fillBufferFn(SlackRestHelper::fillBuffer)
                 .build();
@@ -56,7 +55,7 @@ public final class SlackSources {
             return test.isEmpty() || "REPLACE_THIS".equals(test);
         }
 
-        void fillBuffer(SourceBuilder.SourceBuffer<Tuple2<JsonObject, String>> buf) {
+        void fillBuffer(SourceBuilder.SourceBuffer<String> buf) {
             if (!readyToPoll()) {
                 return;
             }
@@ -74,7 +73,7 @@ public final class SlackSources {
                 while (iterator.hasPrevious()) {
                     JsonObject message = iterator.previous().asObject();
                     oldestTs = message.get("ts").asString();
-                    buf.add(Tuple2.tuple2(message, oldestTs));
+                    buf.add(message.toString());
                 }
             }
 

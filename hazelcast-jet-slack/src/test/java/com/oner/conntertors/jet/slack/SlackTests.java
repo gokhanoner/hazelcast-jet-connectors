@@ -32,9 +32,9 @@ public class SlackTests {
             properties.setProperty("accessToken", "REPLACE_THIS");
             properties.setProperty("channelId", "REPLACE_THIS");
 
-            StreamStage<Tuple2<JsonObject, String>> slackSource = p.drawFrom(SlackSources.channel(properties));
+            StreamStage<String> slackSource = p.drawFrom(SlackSources.channel(properties));
             slackSource.drainTo(Sinks.logger());
-            slackSource.map(msg -> Tuple2.tuple2(msg.f0().get("ts").asString(), msg.f0().toString())).drainTo(Sinks.map("slackMessages"));
+            slackSource.map(msg -> Tuple2.tuple2(System.currentTimeMillis(), msg)).drainTo(Sinks.map("slackMessages"));
 
             Job job = jet.newJob(p);
             Thread.sleep(10_000);
@@ -57,7 +57,6 @@ public class SlackTests {
 
             Properties properties = new Properties();
             properties.setProperty("accessToken", "REPLACE_THIS");
-            properties.setProperty("channelId", "REPLACE_THIS");
 
             BatchStage<Map.Entry<Integer, String>> mapSource = p.drawFrom(Sources.map("slack"));
 
@@ -67,7 +66,8 @@ public class SlackTests {
                 return msg.set("text", e.getValue())
                         .set("channel", "REPLACE_THIS")
                         .set("username", "REPLACE_THIS")
-                        .set("icon_url", "REPLACE_THIS");
+                        .set("icon_url", "REPLACE_THIS")
+                        .toString();
             }).drainTo(SlackSinks.channel(properties.getProperty("accessToken")));
 
             Job job = jet.newJob(p);

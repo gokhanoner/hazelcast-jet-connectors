@@ -1,6 +1,5 @@
 package com.oner.connectors.jet.slack;
 
-import com.hazelcast.com.eclipsesource.json.JsonObject;
 import com.hazelcast.jet.pipeline.Sink;
 import com.hazelcast.jet.pipeline.SinkBuilder;
 import com.oner.connectors.util.SimpleHttpClient;
@@ -25,15 +24,15 @@ public final class SlackSinks {
                 .build();
     }
 
-    public static Sink<JsonObject> channel(String accessToken) {
+    public static Sink<String> channel(String accessToken) {
         return SinkBuilder.sinkBuilder("slack", context ->
                 SimpleHttpClient
                         .create(URL)
                         .withHeader("Authorization", String.format("Bearer %s", accessToken))
                         .withHeader("Content-Type", "application/json; charset=utf-8"))
-                .<JsonObject>receiveFn(((httpClient, message) ->
+                .<String>receiveFn(((httpClient, message) ->
                         httpClient
-                                .withBody(message.toString())
+                                .withBody(message)
                                 .postWithBody()))
                 .build();
     }

@@ -1,6 +1,5 @@
 package com.oner.connectors.jet.gitter;
 
-import com.hazelcast.com.eclipsesource.json.JsonObject;
 import com.hazelcast.jet.Jet;
 import com.hazelcast.jet.JetInstance;
 import com.hazelcast.jet.Job;
@@ -29,10 +28,10 @@ public class GitterTests {
             properties.setProperty("accessToken", "REPLACE_THIS");
             properties.setProperty("roomId", "REPLACE_THIS");
 
-            StreamStage<Tuple2<JsonObject, String>> gitterSource = p.drawFrom(GitterSources.room(properties));
+            StreamStage<String> gitterSource = p.drawFrom(GitterSources.room(properties));
 
             gitterSource.drainTo(Sinks.logger());
-            gitterSource.map(msg -> Tuple2.tuple2(msg.f0().get("id").asString(), msg.f0().toString())).drainTo(Sinks.map("gitter"));
+            gitterSource.map(msg -> Tuple2.tuple2(System.currentTimeMillis(), msg)).drainTo(Sinks.map("gitter"));
 
             Job job = jet.newJob(p);
             Thread.sleep(10_000);
